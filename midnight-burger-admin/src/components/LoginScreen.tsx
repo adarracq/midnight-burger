@@ -85,7 +85,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                 </div>
 
                 <h2 style={styles.title}>Accès Réservé</h2>
-                <p style={styles.subtitle}>Midnight Burgers - Staff Seulement</p>
+                <p style={styles.subtitle}>Midnight Burger</p>
 
                 <form onSubmit={handleSubmit} style={styles.form}>
                     <input
@@ -138,9 +138,9 @@ const styles: Record<string, React.CSSProperties> = {
     },
     card: {
         backgroundColor: 'rgba(255, 255, 255, 0.08)',
-        padding: '40px 30px',
+        padding: '20px',
         borderRadius: '32px',
-        width: '100%',
+        width: '80%',
         maxWidth: '380px',
         textAlign: 'center',
         border: '1px solid rgba(255, 255, 255, 0.15)',

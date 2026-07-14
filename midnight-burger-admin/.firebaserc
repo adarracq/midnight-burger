@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "midnight-burger-23e86"
-  }
+  },
+  "targets": {
+    "midnight-burger-23e86": {
+      "hosting": {
+        "qr-site": [
+          "midnightburger-qr-redirect.web.app"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

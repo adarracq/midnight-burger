@@ -1,21 +1,46 @@
 // src/App.tsx
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import LoginScreen from './components/LoginScreen';
 import OrdersBoard from './components/OrdersBoard';
 import StockManager from './components/StockManager';
 import CatalogEditor from './components/CatalogEditor';
-import { FaBell, FaHamburger } from 'react-icons/fa';
+// 🟢 Import des nouvelles icônes pour la navigation
+import { FaBell, FaHamburger, FaMapMarkedAlt, FaListUl, FaHistory, FaBoxes, FaPen } from 'react-icons/fa';
+import OrderHistory from './components/OrderHistory';
+import { DeliveryMap } from './components/DeliveryMap';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isServiceStarted, setIsServiceStarted] = useState(false);
-  // 🟢 3 onglets distincts
-  const [activeTab, setActiveTab] = useState<'orders' | 'stock' | 'catalog'>('orders');
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('isMidnightAdmin') === 'true';
+  });
+
+  const [isServiceStarted, setIsServiceStarted] = useState(() => {
+    return localStorage.getItem('isMidnightServiceStarted') === 'true';
+  });
+
+  useEffect(() => {
+    if (isServiceStarted && !audioRef.current) {
+      audioRef.current = new Audio('/ring.mp3');
+    }
+  }, [isServiceStarted]);
+
+  // 🟢 On inclut bien l'onglet "map"
+  const [activeTab, setActiveTab] = useState<'map' | 'orders' | 'history' | 'stock' | 'catalog'>('map');
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const handleLogin = () => {
+    localStorage.setItem('isMidnightAdmin', 'true');
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('isMidnightAdmin');
+    setIsAuthenticated(false);
+  };
+
   if (!isAuthenticated) {
-    return <LoginScreen onLogin={() => setIsAuthenticated(true)} />;
+    return <LoginScreen onLogin={handleLogin} />;
   }
 
   if (!isServiceStarted) {
@@ -39,8 +64,13 @@ export default function App() {
             className="glass-btn"
             style={styles.startButton}
             onClick={() => {
+              localStorage.setItem('isMidnightServiceStarted', 'true');
               setIsServiceStarted(true);
               audioRef.current = new Audio('/ring.mp3');
+              audioRef.current.play().then(() => {
+                audioRef.current?.pause();
+                if (audioRef.current) audioRef.current.currentTime = 0;
+              }).catch(() => { });
             }}
           >
             ▶ Démarrer le service
@@ -60,13 +90,15 @@ export default function App() {
 
             .responsive-navbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 30px; }
             .nav-top-row { display: flex; align-items: center; gap: 12px; }
-            .responsive-tabs { display: flex; gap: 8px; }
+            
+            /* 🟢 Refonte des onglets pour mobile (sur une seule ligne) */
+            .responsive-tabs { display: flex; gap: 8px; justify-content: center; }
 
             @media (max-width: 768px) {
-              .responsive-navbar { flex-direction: column; gap: 16px; padding: 16px 20px; }
+              .responsive-navbar { flex-direction: column; gap: 12px; padding: 12px 16px; }
               .nav-top-row { width: 100%; justify-content: space-between; }
-              .responsive-tabs { width: 100%; }
-              .responsive-tabs button { flex: 1; text-align: center; padding: 12px 8px !important; font-size: 13px !important; }
+              .responsive-tabs { width: 100%; justify-content: space-between; gap: 4px; }
+              .responsive-tabs button { flex: 1; padding: 12px 0 !important; display: flex; justify-content: center; }
             }
           `}
       </style>
@@ -77,14 +109,29 @@ export default function App() {
             <FaHamburger size={24} color="#F5E134" />
             <h2 style={styles.logo}>Midnight Admin</h2>
           </div>
-          <button className="nav-btn" style={styles.logoutButton} onClick={() => setIsAuthenticated(false)}>
+          <button className="nav-btn" style={styles.logoutButton} onClick={handleLogout}>
             Déconnexion
           </button>
         </div>
 
+        {/* 🟢 BLOC NAVIGATION AVEC ICÔNES */}
         <div className="responsive-tabs" style={styles.navTabs}>
           <button
             className="nav-btn"
+            title="Carte (GPS)"
+            style={{
+              ...styles.tabButton,
+              backgroundColor: activeTab === 'map' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+              color: activeTab === 'map' ? '#FFFFFF' : 'rgba(235, 235, 245, 0.6)'
+            }}
+            onClick={() => setActiveTab('map')}
+          >
+            <FaMapMarkedAlt size={22} />
+          </button>
+
+          <button
+            className="nav-btn"
+            title="Courses en attente"
             style={{
               ...styles.tabButton,
               backgroundColor: activeTab === 'orders' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
@@ -92,10 +139,25 @@ export default function App() {
             }}
             onClick={() => setActiveTab('orders')}
           >
-            Commandes
+            <FaListUl size={22} />
           </button>
+
           <button
             className="nav-btn"
+            title="Historique des commandes"
+            style={{
+              ...styles.tabButton,
+              backgroundColor: activeTab === 'history' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+              color: activeTab === 'history' ? '#FFFFFF' : 'rgba(235, 235, 245, 0.6)'
+            }}
+            onClick={() => setActiveTab('history')}
+          >
+            <FaHistory size={22} />
+          </button>
+
+          <button
+            className="nav-btn"
+            title="Gestion des stocks"
             style={{
               ...styles.tabButton,
               backgroundColor: activeTab === 'stock' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
@@ -103,10 +165,12 @@ export default function App() {
             }}
             onClick={() => setActiveTab('stock')}
           >
-            Stocks
+            <FaBoxes size={22} />
           </button>
+
           <button
             className="nav-btn"
+            title="Édition du catalogue"
             style={{
               ...styles.tabButton,
               backgroundColor: activeTab === 'catalog' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
@@ -114,13 +178,15 @@ export default function App() {
             }}
             onClick={() => setActiveTab('catalog')}
           >
-            Édition
+            <FaPen size={20} />
           </button>
         </div>
       </nav>
 
       <main style={styles.mainContent}>
+        {activeTab === 'map' && <DeliveryMap />}
         {activeTab === 'orders' && <OrdersBoard audioRef={audioRef} />}
+        {activeTab === 'history' && <OrderHistory />}
         {activeTab === 'stock' && <StockManager />}
         {activeTab === 'catalog' && <CatalogEditor />}
       </main>
@@ -135,12 +201,29 @@ const styles: Record<string, React.CSSProperties> = {
   startTitle: { margin: '0 0 10px 0', fontSize: '24px', fontWeight: 700 },
   startSubtitle: { color: 'rgba(235, 235, 245, 0.6)', margin: '0 0 30px 0', fontSize: '15px', lineHeight: '1.5' },
   startButton: { padding: '16px 24px', fontSize: '16px', backgroundColor: '#F5E134', color: '#000', border: 'none', borderRadius: '16px', cursor: 'pointer', fontWeight: 700, width: '100%' },
-  appContainer: { minHeight: '100vh', backgroundColor: '#000000', display: 'flex', flexDirection: 'column', color: '#FFFFFF' },
+  
+  appContainer: { 
+    height: '100vh', // 🟢 On force la hauteur à 100% de l'écran (au lieu de minHeight)
+    overflow: 'hidden', // 🟢 On bloque le scroll global de la page
+    backgroundColor: '#000000', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    color: '#FFFFFF' 
+  },
+  // ... (ne touche pas au reste)
+  mainContent: { 
+    flexGrow: 1, 
+    overflowY: 'auto', // 🟢 Le scroll se fera uniquement ici pour les autres onglets !
+    display: 'flex', 
+    flexDirection: 'column' 
+  },
   navbarBase: { backgroundColor: 'rgba(25, 25, 25, 0.7)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', position: 'sticky', top: 0, zIndex: 100 },
   navLeft: { display: 'flex', alignItems: 'center', gap: '10px' },
   logo: { margin: 0, fontSize: '20px', fontWeight: 800, letterSpacing: '-0.5px' },
+  
   navTabs: { backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '6px', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.05)' },
-  tabButton: { border: 'none', fontSize: '14px', cursor: 'pointer', fontWeight: 600, padding: '8px 16px', borderRadius: '12px' },
+  tabButton: { border: 'none', cursor: 'pointer', padding: '12px 20px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  
   logoutButton: { backgroundColor: 'rgba(255, 69, 58, 0.1)', color: '#FF453A', border: '1px solid rgba(255, 69, 58, 0.3)', padding: '8px 16px', borderRadius: '12px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 },
-  mainContent: { flexGrow: 1 }
+
 };

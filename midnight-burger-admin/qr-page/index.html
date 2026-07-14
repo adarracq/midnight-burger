@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midnight Burger - Liens</title>
+
+    <!-- Import de FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 40px 20px 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 450px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .header h1 {
+            color: #F5E134;
+            margin: 0 0 8px 0;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header p {
+            color: #AAAAAA;
+            font-size: 16px;
+            margin: 0;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .section-title {
+            color: #FFFFFF;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Styles des Boutons/Cartes */
+        .link-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 20px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #FFF;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+        }
+
+        .link-card:active {
+            transform: scale(0.98);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .link-card.highlight {
+            border-color: rgba(245, 225, 52, 0.5);
+            background-color: rgba(245, 225, 52, 0.1);
+        }
+
+        .card-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .card-sub {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4px;
+        }
+
+        .icon {
+            font-size: 24px;
+        }
+
+        /* Styles de l'image du menu */
+        .menu-container {
+            display: block;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 8px;
+            transition: transform 0.2s ease;
+            background-color: #111;
+        }
+
+        .menu-container:active {
+            transform: scale(0.98);
+        }
+
+        .menu-image {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .menu-hint {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0;
+            font-style: italic;
+        }
+
+        /* Couleurs spécifiques des icônes */
+        .icon-apple {
+            color: #FFF;
+        }
+
+        .icon-android {
+            color: #3DDC84;
+        }
+
+        .icon-phone {
+            color: #5D8ACD;
+        }
+
+        .icon-bell {
+            color: #F5E134;
+        }
+
+        .icon-menu {
+            color: #FF9F0A;
+        }
+
+        /* Grille pour les réseaux sociaux */
+        .social-grid {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-btn {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #FFF;
+            font-weight: 600;
+            font-size: 15px;
+            transition: transform 0.2s;
+        }
+
+        .social-btn:active {
+            transform: scale(0.96);
+        }
+
+        .insta {
+            color: #E1306C;
+        }
+
+        .snap {
+            color: #FFFC00;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- En-tête -->
+        <div class="header">
+            <h1><i class="fa-solid fa-burger"></i> Midnight Burger</h1>
+            <p>Livraison de burgers de nuit<br>23h00 &rarr; 06h00</p>
+        </div>
+
+        <!-- Section Application -->
+        <div>
+            <div class="section-title">
+                <i class="fa-solid fa-bell icon-bell"></i> L'Application
+            </div>
+            <a href="https://apps.apple.com/fr/app/midnight-burger-livraison/id6778747277" class="link-card highlight">
+                <div class="card-col">
+                    <span class="card-title">App Store</span>
+                    <span class="card-sub">Télécharger pour iPhone</span>
+                </div>
+                <i class="fa-brands fa-apple icon icon-apple"></i>
+            </a>
+
+            <a href="https://play.google.com/store/apps/details?id=com.antoinecd.midnightburgerapp"
+                class="link-card highlight">
+                <div class="card-col">
+                    <span class="card-title">Google Play</span>
+                    <span class="card-sub">Télécharger pour Android</span>
+                </div>
+                <i class="fa-brands fa-google-play icon icon-android"></i>
+            </a>
+        </div>
+
+        <!-- 🟢 NOUVELLE SECTION : La Carte -->
+        <div>
+            <div class="section-title">
+                <i class="fa-solid fa-utensils icon-menu"></i> Notre Carte
+            </div>
+            <!-- Assure-toi que le nom du fichier image correspond exactement ici (menu.jpg) -->
+            <a href="menu.jpg" target="_blank" class="menu-container">
+                <img src="menu.jpg" alt="Menu Midnight Burger" class="menu-image">
+            </a>
+            <p class="menu-hint">Appuyez sur l'image pour l'agrandir</p>
+        </div>
+
+        <!-- Section Téléphones -->
+        <div>
+            <div class="section-title">Commander par téléphone</div>
+
+            <a href="tel:+33661651136" class="link-card">
+                <div class="card-col">
+                    <span class="card-title">Cap Ferret</span>
+                    <span class="card-sub">06 61 65 11 36</span>
+                </div>
+                <i class="fa-solid fa-phone icon icon-phone"></i>
+            </a>
+
+            <a href="tel:+33667633391" class="link-card">
+                <div class="card-col">
+                    <span class="card-title">Andernos / Lège / Arès</span>
+                    <span class="card-sub">06 67 63 33 91</span>
+                </div>
+                <i class="fa-solid fa-phone icon icon-phone"></i>
+            </a>
+
+            <a href="tel:+33667625930" class="link-card">
+                <div class="card-col">
+                    <span class="card-title">Lacanau</span>
+                    <span class="card-sub">06 67 62 59 30</span>
+                </div>
+                <i class="fa-solid fa-phone icon icon-phone"></i>
+            </a>
+        </div>
+
+        <!-- Section Réseaux Sociaux -->
+        <div>
+            <div class="section-title">Nos Réseaux</div>
+            <div class="social-grid">
+                <a href="https://www.instagram.com/midnight_burger_33?igsh=ZDZycG1xNmtveTlo" target="_blank"
+                    class="social-btn">
+                    <i class="fa-brands fa-instagram insta" style="font-size: 20px;"></i> Instagram
+                </a>
+                <a href="https://snapchat.com/t/8uYEDqh2" target="_blank" class="social-btn">
+                    <i class="fa-brands fa-snapchat snap" style="font-size: 20px;"></i> Snapchat
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
