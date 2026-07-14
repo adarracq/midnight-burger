@@ -1,0 +1,9 @@
+# Ignore les node_modules de la racine et de tous les sous-dossiers
+node_modules/
+**/node_modules/
+
+# Optionnel : Ignore aussi les fichiers système ou de build courants
+.DS_Store
+dist/
+build/
+.expo/
