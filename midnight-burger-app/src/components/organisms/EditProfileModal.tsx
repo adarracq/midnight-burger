@@ -10,7 +10,7 @@ import {
     TextInput,
     View,
 } from "react-native";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete"; // 🟢 Import ajouté
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { db } from "../../../firebaseConfig";
 import { Button } from "../atoms/Button";
 import { Typography } from "../atoms/Typography";
@@ -35,7 +35,6 @@ export const EditProfileModal = ({
   const [pseudo, setPseudo] = useState("");
   const [phone, setPhone] = useState("");
 
-  // 🟢 États pour l'adresse Google
   const [formattedAddress, setFormattedAddress] = useState("");
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
@@ -43,7 +42,6 @@ export const EditProfileModal = ({
   const [details, setDetails] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🟢 Référence pour l'auto-complétion
   const googlePlacesRef = useRef<any>(null);
 
   const [alertConfig, setAlertConfig] = useState<{
@@ -73,7 +71,6 @@ export const EditProfileModal = ({
         setLng(userData.savedAddress.lng || null);
         setDetails(userData.savedAddress.details || "");
 
-        // 🟢 Pré-remplissage du champ Google
         setTimeout(() => {
           googlePlacesRef.current?.setAddressText(
             userData.savedAddress.street || "",
@@ -115,7 +112,6 @@ export const EditProfileModal = ({
       );
     }
 
-    // 🟢 Vérification de l'adresse (si le client a commencé à taper quelque chose)
     const hasStartedTypingAddress =
       formattedAddress.trim().length > 0 || city.length > 0;
 
@@ -128,22 +124,11 @@ export const EditProfileModal = ({
         );
       }
 
-      const isCityAllowed = AVAILABLE_CITIES.filter(
-        (c) => c !== "Autres" && c !== "autre" && c !== "Autres ",
-      ).some((c) => c.toLowerCase().trim() === city.toLowerCase().trim());
-
-      if (!isCityAllowed) {
-        return showAlert(
-          "Zone non desservie",
-          `Désolé, nous ne livrons pas à ${city || "cette adresse"}.\n\nVoici nos zones de livraison : ${AVAILABLE_CITIES.filter((c) => c !== "Autres").join(", ")}.`,
-          "info",
-        );
-      }
+      // 🟢 SUPPRESSION : On ne bloque plus la sauvegarde si la ville n'est pas dans la liste.
     }
 
     setLoading(true);
     try {
-      // 🟢 On enregistre la nouvelle structure d'adresse avec le GPS
       const addressObj = hasStartedTypingAddress
         ? {
             street: formattedAddress,
@@ -241,7 +226,6 @@ export const EditProfileModal = ({
           ADRESSE PAR DÉFAUT
         </Typography>
         <View style={styles.glassCard}>
-          {/* 🟢 INTÉGRATION GOOGLE PLACES */}
           <GooglePlacesAutocomplete
             ref={googlePlacesRef}
             placeholder="Saisissez votre adresse"
@@ -257,6 +241,24 @@ export const EditProfileModal = ({
                 );
                 const extractedCity = cityObj ? cityObj.long_name : "";
 
+                // 🟢 AJOUT : Vérification au moment de la sélection
+                const isCityAllowed = AVAILABLE_CITIES.filter(
+                  (c) => c !== "Autres" && c !== "autre" && c !== "Autres ",
+                ).some(
+                  (c) =>
+                    c.toLowerCase().trim() ===
+                    extractedCity.toLowerCase().trim(),
+                );
+
+                if (!isCityAllowed) {
+                  showAlert(
+                    "Hors zone habituelle",
+                    `Attention, ${extractedCity || "cette ville"} ne fait pas partie de nos zones de livraison habituelles.\n\nVous pouvez enregistrer cette adresse, mais le restaurant se réserve le droit d'annuler la commande.`,
+                    "warning",
+                  );
+                }
+
+                // 🟢 On sauvegarde quand même l'adresse dans le state
                 setFormattedAddress(data.description);
                 setCity(extractedCity);
                 setLat(details.geometry.location.lat);
@@ -352,7 +354,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.surfaceBorder,
     marginBottom: 24,
-    zIndex: 100, // 🟢 Important pour que la liste Google passe par-dessus le reste
+    zIndex: 100,
   },
   detailsInput: {
     minHeight: 80,
@@ -372,8 +374,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: Colors.surfaceBorder,
   },
-
-  // 🟢 Styles Google Places
   inputGoogle: {
     backgroundColor: Colors.surfaceLight,
     color: Colors.text,

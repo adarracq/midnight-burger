@@ -18,7 +18,7 @@ import {
     serverTimestamp,
     updateDoc,
 } from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react"; // 🟢 Ajout de useRef
+import React, { useEffect, useRef, useState } from "react";
 import { FlatList, StyleSheet, Switch, TextInput, View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { auth, db } from "../../../firebaseConfig";
@@ -51,14 +51,13 @@ export const CartModal = ({ isVisible, onClose }: CartModalProps) => {
   const [loading, setLoading] = useState(false);
   const [useFreeBurger, setUseFreeBurger] = useState(false);
 
-  // 🟢 Création de la référence pour le champ Google
   const googlePlacesRef = useRef<any>(null);
 
   const [alertConfig, setAlertConfig] = useState<{
     visible: boolean;
     title: string;
     message: string;
-    type: "success" | "error" | "info";
+    type: "success" | "error" | "info" | "warning"; // 🟢 Ajout de "warning"
     onCloseAction?: () => void;
   }>({
     visible: false,
@@ -90,7 +89,6 @@ export const CartModal = ({ isVisible, onClose }: CartModalProps) => {
               setLng(data.savedAddress.lng || null);
               setDetails(data.savedAddress.details || "");
 
-              // 🟢 Remplissage manuel de l'adresse au chargement pour éviter le bug du defaultValue
               setTimeout(() => {
                 googlePlacesRef.current?.setAddressText(
                   data.savedAddress.street || "",
@@ -169,7 +167,7 @@ export const CartModal = ({ isVisible, onClose }: CartModalProps) => {
   const showAlert = (
     title: string,
     message: string,
-    type: "success" | "error" | "info",
+    type: "success" | "error" | "info" | "warning", // 🟢 Ajout de "warning"
     onCloseAction?: () => void,
   ) => {
     setAlertConfig({ visible: true, title, message, type, onCloseAction });
@@ -209,18 +207,8 @@ export const CartModal = ({ isVisible, onClose }: CartModalProps) => {
         "error",
       );
 
-    const isCityAllowed = AVAILABLE_CITIES.filter(
-      (c) => c !== "Autres" && c !== "autre" && c !== "Autres ",
-    ) // On exclut l'option "Autres"
-      .some((c) => c.toLowerCase().trim() === city.toLowerCase().trim());
-
-    if (!isCityAllowed) {
-      return showAlert(
-        "Zone non desservie",
-        `Désolé, nous ne livrons pas à ${city || "cette adresse"}.\n\nVoici nos zones de livraison : ${AVAILABLE_CITIES.filter((c) => c !== "Autres").join(", ")}.`,
-        "info",
-      );
-    }
+    // 🟢 SUPPRESSION : On ne bloque plus si la ville n'est pas desservie.
+    // L'avertissement a déjà été affiché lors de la sélection de l'adresse.
 
     setLoading(true);
     try {
@@ -422,10 +410,10 @@ export const CartModal = ({ isVisible, onClose }: CartModalProps) => {
                   </Typography>
                   <View style={styles.glassCard}>
                     <GooglePlacesAutocomplete
-                      ref={googlePlacesRef} // 🟢 Ajout de la ref
+                      ref={googlePlacesRef}
                       placeholder="Saisissez votre adresse de livraison"
                       fetchDetails={true}
-                      debounce={300} // 🟢 Ajout du debounce pour ne pas spammer l'API et bloquer les requêtes
+                      debounce={300}
                       onPress={(data, details = null) => {
                         if (details) {
                           const addressComponents = details.address_components;
@@ -437,6 +425,26 @@ export const CartModal = ({ isVisible, onClose }: CartModalProps) => {
                           const extractedCity = cityObj
                             ? cityObj.long_name
                             : "";
+
+                          // 🟢 AJOUT : Vérification au moment de la sélection
+                          const isCityAllowed = AVAILABLE_CITIES.filter(
+                            (c) =>
+                              c !== "Autres" &&
+                              c !== "autre" &&
+                              c !== "Autres ",
+                          ).some(
+                            (c) =>
+                              c.toLowerCase().trim() ===
+                              extractedCity.toLowerCase().trim(),
+                          );
+
+                          if (!isCityAllowed) {
+                            showAlert(
+                              "Hors zone habituelle",
+                              `Attention, ${extractedCity || "cette ville"} ne fait pas partie de nos zones de livraison habituelles.\n\nVous pouvez passer commande, mais le restaurant se réserve le droit de l'annuler selon l'affluence.`,
+                              "warning",
+                            );
+                          }
 
                           setFormattedAddress(data.description);
                           setCity(extractedCity);
@@ -589,7 +597,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 8,
   },
-
   inputGoogle: {
     backgroundColor: Colors.surfaceLight,
     color: Colors.text,

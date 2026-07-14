@@ -7,3 +7,8 @@ node_modules/
 dist/
 build/
 .expo/
+
+# Ignore les fichiers d'environnement et secrets
+.env
+.env.*
+*.local

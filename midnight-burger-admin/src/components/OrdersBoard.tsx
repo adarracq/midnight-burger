@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { db } from '../firebaseConfig';
 import type { Order } from '../types';
 import { OrderCard } from './OrderCard'; // 🟢 Import du nouveau composant
-import { DeliveryMap } from './DeliveryMap';
 
 interface OrdersBoardProps {
     audioRef: React.MutableRefObject<HTMLAudioElement | null>;
